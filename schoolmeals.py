@@ -41,7 +41,7 @@ def WordFreq(all_text):
 def SentenceFreq(all_text):
     return sent_tokenize(all_text)
 
-def MostFreq(df, col_name, top_N=10, isWord=True):
+def MostFreq(df, col_name, top_N=10, isWord=False):
     all_text = ','.join(df[col_name].astype(str))
 
     if isWord:
@@ -68,6 +68,11 @@ def AppendSheet(xls_name, sheet_name, df):
     with pd.ExcelWriter(xls_name, engine='openpyxl', mode='a') as writer:
         df.to_excel(writer, sheet_name=sheet_name, index=False)
 
+def AppendFreqSheet(xls_name, col_name, sheet_name, df):
+    freq = MostFreq(df, col_name)
+
+    AppendSheet(xls_name, sheet_name, freq)
+
 def main():
     school_xsl = 'SurveyData/School_2_2021.xlsx'
     df = pd.read_excel(school_xsl)
@@ -78,12 +83,12 @@ def main():
 
     df.to_excel(school_xsl, sheet_name='Sheet1', index=False)
 
-    word_freq = MostFreq(df, 'Q28', isWord=False)
+    AppendFreqSheet(xls_name=school_xsl, col_name='Q28', sheet_name='Freq_Q28', df=df)
 
-    AppendSheet(school_xsl, 'Freq_Q28', word_freq)
+    AppendFreqSheet(school_xsl, 'Q30', 'Freq_Q30', df)
 
-    sent_freq = MostFreq(df, 'Q30', isWord=False)
+    AppendFreqSheet(school_xsl, 'Q29_1', 'School_Meal_Rating_Q29', df)
 
-    AppendSheet(school_xsl, 'Freq_Q30', sent_freq)
+    AppendFreqSheet(school_xsl, 'Q36', 'Meat_Free_Days_Q36', df)
 
 main()
