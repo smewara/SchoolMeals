@@ -42,7 +42,7 @@ def SentenceFreq(all_text):
     return sent_tokenize(all_text)
 
 def MostFreq(df, col_name, top_N=10, isWord=True):
-    all_text = ' '.join(df[col_name].astype(str))
+    all_text = ','.join(df[col_name].astype(str))
 
     if isWord:
         print('\n Print word frequency:\n')
@@ -55,20 +55,11 @@ def MostFreq(df, col_name, top_N=10, isWord=True):
     word_counts = Counter(mostFreq)
     most_common_words = word_counts.most_common(top_N)
 
-    text_object = Text(mostFreq)
-
-    concordance_lists = []
-
     for word, frequency in most_common_words:
         print(f'{word}: {frequency}\n')
-        concordance_list = text_object.concordance_list(word, lines=5)
-        #print(f'Concordance for {word}: {concordance_list}\n')
-        concordance_lists.append(concordance_list)
 
     most_common_words_df = pd.DataFrame(most_common_words, columns=['Phrase', 'Frequency'])
-    #most_common_words_df['ConcordanceList'] = concordance_lists
 
-    # Sort the DataFrame by frequency in descending order
     most_common_words_df = most_common_words_df.sort_values(by='Frequency', ascending=False)
 
     return most_common_words_df
@@ -89,10 +80,10 @@ def main():
 
     word_freq = MostFreq(df, 'Q28', isWord=False)
 
-    AppendSheet(school_xsl, 'Word_Freq_Q28', word_freq)
+    AppendSheet(school_xsl, 'Freq_Q28', word_freq)
 
     sent_freq = MostFreq(df, 'Q30', isWord=False)
 
-    AppendSheet(school_xsl, 'Sent_Freq_Q30', sent_freq)
+    AppendSheet(school_xsl, 'Freq_Q30', sent_freq)
 
 main()
