@@ -69,7 +69,7 @@ def AppendSheet(xls_name, sheet_name, df):
         df.to_excel(writer, sheet_name=sheet_name, index=False)
 
 def main():
-    school_xsl = 'SurveyData/School_1a_2021.xlsx'
+    school_xsl = 'SurveyData/School_2_2021.xlsx'
     df = pd.read_excel(school_xsl)
 
     nltk.download('vader_lexicon')
