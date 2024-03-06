@@ -5,6 +5,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 from collections import Counter
 from nltk import Text, FreqDist
+import Lemmatization as lemm
 
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -90,5 +91,16 @@ def main():
     AppendFreqSheet(school_xsl, 'Q29_1', 'School_Meal_Rating_Q29', df)
 
     AppendFreqSheet(school_xsl, 'Q36', 'Meat_Free_Days_Q36', df)
+
+    lemmatizedSentences = lemm.lemmatize_sentences(df['Q36_4_TEXT'][1:])
+
+    summary = lemm.generate_summary(lemmatizedSentences)
+
+    print(summary)
+
+    summary_df = pd.DataFrame()
+    summary_df['Q36_SUMMARY'] = summary
+
+    AppendSheet(xls_name=school_xsl, sheet_name='Q36_TEXT_SUMMARY', df=summary_df)
 
 main()
