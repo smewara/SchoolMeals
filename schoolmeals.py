@@ -24,7 +24,7 @@ def sentimentAnalysis(df, col_name):
 
     print(df[sentiments_col_name])
 
-    return df
+    return sentiments
 
 def WordFreq(all_text):
     # Load English stop words
@@ -73,6 +73,23 @@ def AppendFreqSheet(xls_name, col_name, sheet_name, df):
 
     AppendSheet(xls_name, sheet_name, freq)
 
+def AppendSentimentSheet(xls_name, sheet_name, df, positive_sentiment_threshold=0.4):
+    sentiment_df = pd.DataFrame(columns=['Positive Responses', 'Negative or Neutral Responses'])
+
+    for index, row in df.iloc[1:].iterrows():
+        compound = row['Q36_4_TEXT_SENTIMENT']['compound']
+        phrase = row['Q36_4_TEXT']
+
+        if compound >= positive_sentiment_threshold:
+            sentiment_df.loc[len(sentiment_df)] = [phrase, None]
+        else:
+            sentiment_df.loc[len(sentiment_df)] = [None, phrase]
+
+    sentiment_df = sentiment_df.dropna(subset=['Positive Responses', 'Negative or Neutral Responses'], how='all')
+
+    with pd.ExcelWriter(xls_name, engine='openpyxl', mode='a') as writer:
+        sentiment_df.to_excel(writer, sheet_name=sheet_name, index=False)
+
 def main():
     school_xsl = 'SurveyData/School_2_2021.xlsx'
     df = pd.read_excel(school_xsl)
@@ -82,6 +99,8 @@ def main():
     sentimentAnalysis(df, 'Q36_4_TEXT')
 
     df.to_excel(school_xsl, sheet_name='Sheet1', index=False)
+
+    AppendSentimentSheet(school_xsl, sheet_name='Q36_SENTIMENTS', df=df, positive_sentiment_threshold=0.4)
 
     AppendFreqSheet(xls_name=school_xsl, col_name='Q28', sheet_name='Freq_Q28', df=df)
 
